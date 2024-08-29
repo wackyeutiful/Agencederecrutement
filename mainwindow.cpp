@@ -232,7 +232,7 @@ void MainWindow::on_comboBox_activated(int index)//TRI
 float countType(QString ch)
 {
     QSqlQueryModel* searchModel = new QSqlQueryModel();
-    searchModel->setQuery("SELECT * FROM Formation WHERE DUREE_FORMATION  '%"+ch+"%' ");
+    searchModel->setQuery("SELECT * FROM Formation WHERE DUREE_FORMATION  '"+ch+"' ");
 
     return searchModel->rowCount() ;
 }
@@ -245,8 +245,8 @@ void MainWindow::on_stat_clicked()//STAT
 
     }
     float s0, s1;
-    s0 = countType(">5");
-    s1 = countType("<=5");
+    s0 = countType("> 5");
+    s1 = countType("<= 5");
     qDebug () << s0 ;
     float stat = s0 + s1  ;
     float x = (stat != 0) ? (s0 * 100) / stat : 0.0;
@@ -279,7 +279,7 @@ void MainWindow::on_stat_clicked()//STAT
     chartview->setRenderHint(QPainter::Antialiasing);
     chartview->setFixedSize(ui->statform->size());
     chartview->setParent(ui->statform);
-    ui->stackedWidget->setCurrentIndex(2);
+    ui->stackedWidget->setCurrentIndex(1);
 
 
 }
@@ -492,19 +492,19 @@ void MainWindow::on_statf_clicked()//STAT
     chartview->setRenderHint(QPainter::Antialiasing);
     chartview->setFixedSize(ui->sformateur->size());
     chartview->setParent(ui->sformateur);
-    ui->stackedWidget->setCurrentIndex(3);
+    ui->stackedWidget->setCurrentIndex(4);
 
     }
 
 
     void MainWindow::on_pushButton_8_clicked()
     {
-        ui->stackedWidget->setCurrentIndex(0);
+        ui->stackedWidget->setCurrentIndex(3);
     }
 
     void MainWindow::on_pushButton_9_clicked()
     {
-        ui->stackedWidget->setCurrentIndex(1);
+        ui->stackedWidget->setCurrentIndex(0);
 
     }
 
@@ -529,7 +529,7 @@ void MainWindow::on_statf_clicked()//STAT
     void MainWindow::sendMail()
     {
 
-                Smtp* smtp = new Smtp("mail", "ftsszztbqqaidtgp", "smtp.gmail.com", 465);
+                Smtp* smtp = new Smtp("ameni.bousselmi@esprit.tn", "221JFT4190", "smtp.gmail.com", 465);
                 connect(smtp, SIGNAL(status(QString)), this, SLOT(mailSent(QString)));
                 smtp->sendMail(ui->mail->text(), ui->mail->text(),ui->titref->text(),ui->descriptionf->toPlainText());
 
@@ -537,3 +537,8 @@ void MainWindow::on_statf_clicked()//STAT
 
 
 
+
+void MainWindow::on_pushButton_23_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(2);
+}
