@@ -7,14 +7,13 @@ Formation::Formation()
 bool Formation::ajouter()
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO Formation (id_formateur,id_formation,duree_formation,titre,description,nbr_personne,date_formation) "
-                  "VALUES (1,:id,:duree_formation, :titre ,:description,:nbr_personne,:date_formation)");
+    query.prepare("INSERT INTO Formation (id_formateur,id_formation,duree_formation,titre,description,nbr_personne) "
+                  "VALUES (1,:id,:duree_formation, :titre ,:description,:nbr_personne,)");
           query.bindValue(":id", id);
           query.bindValue(":duree_formation", duree);
           query.bindValue(":titre", tf);
           query.bindValue(":description", df);
           query.bindValue(":nbr_personne",nbrp);
-          query.bindValue(":date_formation",dateform);
 
 
 
@@ -37,13 +36,12 @@ QSqlQueryModel * Formation::afficher()
     bool Formation::modifier(int id)
     {
         QSqlQuery query;
-        query.prepare("UPDATE Formation SET duree_formation=:duree_formation,titre=:titre,description=:description,nbr_personne=:nbr_personne,date_formation=:date_formation WHERE id_Formation=:id");
+        query.prepare("UPDATE Formation SET duree_formation=:duree_formation,titre=:titre,description=:description,nbr_personne=:nbr_personne WHERE id_Formation=:id");
         query.bindValue(":id", id);
         query.bindValue(":duree_formation", duree);
         query.bindValue(":titre", tf);
         query.bindValue(":description", df);
         query.bindValue(":nbr_personne",nbrp);
-        query.bindValue(":date_formation",dateform);
 
                 return  query.exec();
     }

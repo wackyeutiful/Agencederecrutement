@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     if(query.exec()){
         while (query.next()) {
             int id_entreprise = query.value(0).toInt();
-            ui->comboBox_3->addItem(QString("%1").arg(id_entreprise));
+            ui->comboBox_4->addItem(QString("%1").arg(id_entreprise));
 
         }}
     query.prepare("SELECT id_formateur  FROM Formateur");
@@ -46,7 +46,30 @@ MainWindow::MainWindow(QWidget *parent)
         }}
 
 
+            QTimer *timer = new QTimer(this);
+            connect(timer, &QTimer::timeout, this, &MainWindow::checkTime);
+            timer->start(1000);
 
+
+            ui->calendarWidget->setDateTextFormat(QDate(), QTextCharFormat()); // Reset any formatting
+
+            query.prepare("SELECT time FROM calendar WHERE id_formateur = :id_formateur");
+            query.bindValue(":id_formateur", ui->comboBox_3->currentText());
+
+            if (query.exec()) {
+                QList<QDate> datesFromDatabase;
+
+                while (query.next()) {
+                    QDate time = query.value(0).toDate();
+                    datesFromDatabase.append(time);
+                }
+
+                for (const QDate& date : datesFromDatabase) {
+                    QTextCharFormat format = ui->calendarWidget->dateTextFormat(date);
+                    format.setBackground(Qt::green);
+                    ui->calendarWidget->setDateTextFormat(date, format);
+                }
+            }
 }
 
 MainWindow::~MainWindow()
@@ -62,10 +85,9 @@ void MainWindow::on_pushButton_clicked()//AJOUT
     int duree=ui->dureef->value();
     QString idf=ui->idf->currentText();
     QString description=ui->descriptionf->toPlainText();
-    QDate date_formation = ui->datef->date();
     int nbrp=ui->nbrp->value();
     int id=ui->idi->text().toInt();
-   Formation fa(id,duree,titre,description,nbrp,date_formation,idf);
+   Formation fa(id,duree,titre,description,nbrp,idf);
    if(fa.existance(ui->idi->text()))
    {
        bool test=fa.ajouter();
@@ -111,10 +133,9 @@ void MainWindow::on_pushButton_2_clicked()//MODIFICATION
     int duree=ui->dureef->value();
     QString idf=ui->idf->currentText();
     QString description=ui->descriptionf->toPlainText();
-    QDate date_formation = ui->datef->date();
     int nbrp=ui->nbrp->value();
     int id=ui->idi->text().toInt();
-   Formation fa(id,duree,titre,description,nbrp,date_formation,idf);
+   Formation fa(id,duree,titre,description,nbrp,idf);
         bool test=fa.modifier(id);
         if(test)
         {
@@ -143,7 +164,6 @@ void MainWindow::on_afficher_activated(const QModelIndex &index)//AFFICHAGE
                 ui->dureef->setValue(qry.value(1).toInt());
                 ui->idf->setCurrentText(qry.value(4).toString());
                 ui->descriptionf->setText(qry.value(3).toString());
-                ui->datef->setDate(qry.value(6).toDate());
                 ui->nbrp->setValue(qry.value(5).toInt());
 
             }
@@ -154,12 +174,11 @@ void MainWindow::on_afficher_activated(const QModelIndex &index)//AFFICHAGE
             QMessageBox::critical(nullptr, QObject::tr("selection n'est pas effuctué"),  QObject::tr("connection failed.\n" "Click Cancel to exit."), QMessageBox::Cancel);
         }
         //QR CODE
-        QString text ="id formation:\n"+ ui->afficher->model()->data(ui->afficher->model()->index(ui->afficher->currentIndex().row(),0)).toString()+
-                       +"nom entreprise:\n "+ui->afficher->model()->data(ui->afficher->model()->index(ui->afficher->currentIndex().row(),1)).toString()
-                       +"type entreprise\n: "+ui->afficher->model()->data(ui->afficher->model()->index(ui->afficher->currentIndex().row(),2)).toString()
-                       +"date creation:\n "+ui->afficher->model()->data(ui->afficher->model()->index(ui->afficher->currentIndex().row(),7)).toString()
-                       +"nombre employees max:\n "+ui->afficher->model()->data(ui->afficher->model()->index(ui->afficher->currentIndex().row(),3)).toString()
-                       +"nombre employees actuelle: "+ui->afficher->model()->data(ui->afficher->model()->index(ui->afficher->currentIndex().row(),4)).toString();
+        QString text ="id formation:"+ ui->afficher->model()->data(ui->afficher->model()->index(ui->afficher->currentIndex().row(),0)).toString()+
+                       +"\n duree formation:\n "+ui->afficher->model()->data(ui->afficher->model()->index(ui->afficher->currentIndex().row(),1)).toString()
+                       +"\n titre formation\n: "+ui->afficher->model()->data(ui->afficher->model()->index(ui->afficher->currentIndex().row(),2)).toString()
+                       +"\n description\n "+ui->afficher->model()->data(ui->afficher->model()->index(ui->afficher->currentIndex().row(),3)).toString()
+                       +"\n nbr_personne: "+ui->afficher->model()->data(ui->afficher->model()->index(ui->afficher->currentIndex().row(),4)).toString();
 
 
         using namespace qrcodegen;
@@ -232,9 +251,9 @@ void MainWindow::on_comboBox_activated(int index)//TRI
 float countType(QString ch)
 {
     QSqlQueryModel* searchModel = new QSqlQueryModel();
-    searchModel->setQuery("SELECT * FROM Formation WHERE DUREE_FORMATION  '"+ch+"' ");
-
-    return searchModel->rowCount() ;
+    QString queryStr = "SELECT * FROM Formation WHERE DUREE_FORMATION " + ch;
+    searchModel->setQuery(queryStr);
+    return searchModel->rowCount();
 }
 
 void MainWindow::on_stat_clicked()//STAT
@@ -245,8 +264,8 @@ void MainWindow::on_stat_clicked()//STAT
 
     }
     float s0, s1;
-    s0 = countType("> 5");
-    s1 = countType("<= 5");
+    s0 = countType(">5");
+    s1 = countType("<=5");
     qDebug () << s0 ;
     float stat = s0 + s1  ;
     float x = (stat != 0) ? (s0 * 100) / stat : 0.0;
@@ -510,7 +529,7 @@ void MainWindow::on_statf_clicked()//STAT
 
     void MainWindow::on_pushButton_12_clicked()
     {
-        ui->stackedWidget->setCurrentIndex(4);
+        ui->stackedWidget->setCurrentIndex(0);
     }
 
 
@@ -529,7 +548,7 @@ void MainWindow::on_statf_clicked()//STAT
     void MainWindow::sendMail()
     {
 
-                Smtp* smtp = new Smtp("ameni.bousselmi@esprit.tn", "221JFT4190", "smtp.gmail.com", 465);
+                 Smtp* smtp = new Smtp("amenibouselem@gmail.com", "oisi iucc ajmi rkgl", "smtp.gmail.com", 465);
                 connect(smtp, SIGNAL(status(QString)), this, SLOT(mailSent(QString)));
                 smtp->sendMail(ui->mail->text(), ui->mail->text(),ui->titref->text(),ui->descriptionf->toPlainText());
 
@@ -538,7 +557,108 @@ void MainWindow::on_statf_clicked()//STAT
 
 
 
+    void MainWindow::on_pushButton_11_clicked()
+    {
+        int id_formateur=ui->comboBox_3->currentText().toInt();
+        int id_formation=ui->comboBox_4->currentText().toInt();
+        QDate time=ui->calendarWidget->selectedDate();
+
+        QSqlQuery query;
+        query.prepare("INSERT INTO Calendar (id_formateur,id_formation,time) "
+                      "VALUES (:id_formateur,:id_formation,:time)");
+
+        query.bindValue(":id_formateur", id_formateur);
+        query.bindValue(":id_formation", id_formation);
+        query.bindValue(":time", time);
+        query.exec();
+        ui->calendarWidget->setDateTextFormat(QDate(), QTextCharFormat()); // Reset any formatting
+
+        query.prepare("SELECT time FROM calendar WHERE id_formateur = :id_formateur");
+        query.bindValue(":id_formateur", ui->comboBox_3->currentText());
+
+        if (query.exec()) {
+            QList<QDate> datesFromDatabase;
+
+            while (query.next()) {
+                QDate time = query.value(0).toDate();
+                datesFromDatabase.append(time);
+            }
+
+            for (const QDate& date : datesFromDatabase) {
+                QTextCharFormat format = ui->calendarWidget->dateTextFormat(date);
+                format.setBackground(Qt::green);
+                ui->calendarWidget->setDateTextFormat(date, format);
+            }
+        }
+
+
+    }
+    void MainWindow::checkTime() //NOTIFICATION
+    {
+
+        QSqlQuery query;
+        if (query.exec("SELECT id_formation, time,id_formateur,status FROM calendar")) {
+            while (query.next()) {
+                int id = query.value(0).toInt();
+                int id_formateur = query.value(2).toInt();
+                int status=query.value(3).toInt();
+                QString dbDateTimeStr = query.value(1).toString();
+
+                QDateTime dbDateTime = QDateTime::fromString(dbDateTimeStr, Qt::ISODate);
+
+                if (!dbDateTime.isValid()) {
+                    qDebug() << "Invalid datetime format in database: " << dbDateTimeStr;
+                    continue;
+                }
+
+                QDateTime currentDateTime = QDateTime::currentDateTime();
+
+                qDebug() << "Database DateTime: " << dbDateTime.toString(Qt::ISODate);
+                qDebug() << "Current DateTime: " << currentDateTime.toString(Qt::ISODate);
+
+                if (dbDateTime.toString("yyyy-MM-dd HH:mm") == currentDateTime.toString("yyyy-MM-dd HH:mm") && (status==0)) {
+                    QMessageBox::StandardButton reply;
+                    QString message = QString("Formateur numéro %1 a la formation numéro : %2 maintenant!")
+                                          .arg(id_formateur)
+                                          .arg(id);
+
+                    reply = QMessageBox::information(nullptr, "Time Alert", message, QMessageBox::Ok | QMessageBox::Cancel);
+
+
+                    if (reply == QMessageBox::Ok) {
+                        QSqlQuery updateQuery;
+                        updateQuery.prepare("UPDATE calendar SET status = 1 WHERE id_formation = :id");
+                        updateQuery.bindValue(":id", id);
+
+                        if (!updateQuery.exec()) {
+                            qDebug() << "Update failed: " ;
+                        } else {
+                            qDebug() << "Record updated successfully.";
+                        }
+                    }
+                }
+            }
+        } else {
+            qDebug() << "Query failed: ";
+        }
+
+    }
+
+
+
 void MainWindow::on_pushButton_23_clicked()
 {
     ui->stackedWidget->setCurrentIndex(2);
+}
+
+void MainWindow::on_pushButton_13_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(3);
+
+}
+
+void MainWindow::on_pushButton_14_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(3);
+
 }

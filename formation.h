@@ -31,15 +31,14 @@ public:
              QSqlQueryModel *trier();
              QSqlQueryModel *rechercher(QString id);
              QChart *statistique_chart();
-             Formation(int idd,int d, QString t, QString dt, int n, QDate dfm, QString idff)
-                     : id(idd),duree(d), tf(t), df(dt), nbrp(n), dateform(dfm), idf(idff) {
+             Formation(int idd,int d, QString t, QString dt, int n,  QString idff)
+                     : id(idd),duree(d), tf(t), df(dt), nbrp(n),  idf(idff) {
                  };
              bool existance(QString id);
 private :
     int duree,id;
     QString tf, df;
     int nbrp;
-    QDate dateform;
     QString idf;
 };
 

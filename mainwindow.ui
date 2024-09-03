@@ -17,14 +17,14 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>20</y>
+      <x>10</x>
+      <y>0</y>
       <width>931</width>
       <height>581</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="page">
      <widget class="QLabel" name="label">
@@ -163,19 +163,6 @@
        <string>Description de formation:</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_5">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>290</y>
-        <width>111</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Date de formation:</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_8">
       <property name="geometry">
        <rect>
@@ -196,16 +183,6 @@
         <y>140</y>
         <width>151</width>
         <height>87</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QDateEdit" name="datef">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>290</y>
-        <width>110</width>
-        <height>21</height>
        </rect>
       </property>
      </widget>
@@ -278,8 +255,8 @@
      <widget class="QLabel" name="qr">
       <property name="geometry">
        <rect>
-        <x>90</x>
-        <y>410</y>
+        <x>70</x>
+        <y>370</y>
         <width>201</width>
         <height>181</height>
        </rect>
@@ -337,14 +314,27 @@
        <string>Envoyer email</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pushButton_13">
+      <property name="geometry">
+       <rect>
+        <x>570</x>
+        <y>70</y>
+        <width>221</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Go to formateur</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_3">
      <widget class="QLabel" name="statform">
       <property name="geometry">
        <rect>
-        <x>60</x>
+        <x>20</x>
         <y>60</y>
-        <width>761</width>
+        <width>801</width>
         <height>491</height>
        </rect>
       </property>
@@ -408,6 +398,45 @@
       </property>
       <property name="text">
        <string>Assigner</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>20</y>
+        <width>121</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>     Id Formateur :</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_11">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>30</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Id Formation :</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_14">
+      <property name="geometry">
+       <rect>
+        <x>830</x>
+        <y>360</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>formateur</string>
       </property>
      </widget>
     </widget>
@@ -706,7 +735,20 @@
        </rect>
       </property>
       <property name="text">
-       <string>Assign</string>
+       <string>Calendar</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_12">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>211</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Go to formation</string>
       </property>
      </widget>
     </widget>
